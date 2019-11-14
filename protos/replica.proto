@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package protos;
+
+message SyncMsg {
+    string clientId = 1;
+    uint64 timestamp = 2;
+    bytes action = 3;
+    bytes mac = 4;
+}
+message SyncReply {
+    string clientId = 1;
+    uint64 timestamp = 2;
+    bytes result = 3;
+    uint32 replicaId = 4;
+    uint64 view = 5;
+}
+
+message PrePrepareMsg {
+    uint64 seq = 1;
+    uint64 view = 2;
+    bytes digest = 3;
+    bytes mac = 4;
+}
+
+message PrepareMsg {
+    uint32 replicaId = 1;
+    uint64 view = 2;
+    uint64 seq = 3;
+    bytes digest = 4;
+    bytes mac = 5;
+}
+
+message CommitMsg {
+    uint32 replicaId = 1;
+    uint64 view = 2;
+    uint64 seq = 3;
+    bytes digest = 4;
+    bytes mac = 5;
+}
+
+message Response {
+    uint32 replicaId = 1;
+    uint32 code = 2;
+    string msg = 3;
+}
+
+service Replica {
+    rpc Sync(SyncMsg) returns (SyncReply) {};
+    rpc PrePrepare(PrePrepareMsg) returns (Response) {};
+    rpc Prepare(PrepareMsg) returns (Response) {};
+    rpc Commit(CommitMsg) returns (Response) {};
+}
